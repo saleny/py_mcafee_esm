@@ -21,5 +21,8 @@ class EsmRequest:
     def esm_int_get(self, method):
         return get(f'{self.url}/rs/v1/runningQuery/{method}', headers=self.headers, verify=self.verify)
 
+    def default_post(self, method, data):
+        return post(f'{self.url}/{method}', data=dumps(data), headers=self.headers, verify=self.verify)
+
     def qry_close(self, result_id):
         return self.esm_post('qryClose', {'resultID': result_id})

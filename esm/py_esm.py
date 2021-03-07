@@ -1,4 +1,4 @@
-from special_requets import EsmRequest
+from .special_requets import EsmRequest
 from base64 import b64encode
 from time import sleep
 
@@ -57,7 +57,7 @@ class IncidentManagement(EsmRequest):
     def __init__(self, active_session):
         super().__init__(active_session.url, headers=active_session.headers, verify=active_session.verify)
 
-    def get_incidents_list(self, fields, filters, sort, sort_field, limit):
+    def get_incidents(self, fields, filters, sort, sort_field, limit):
         data = {"query": {"fields": {"opt": "SELECT", "opr": fields, "exp": None},
                           "sources": {"opt": "SOURCE", "opr": [],
                                       "exp": [{"opt": "EQUALS", "opr": ["QUERYID", "25876"], "exp": []},
@@ -76,3 +76,37 @@ class IncidentManagement(EsmRequest):
                 break
         super().qry_close(result_id)
         return tuple(request_result.json()['data'])
+
+    def get_case_detail(self, case_id):
+        return super().esm_post('caseGetCaseDetail', {'id': case_id}).json()
+
+
+class WatchList(EsmRequest):
+    def __init__(self, active_session):
+        super().__init__(active_session.url, headers=active_session.headers, verify=active_session.verify)
+
+    def get_fields(self):
+        return super().esm_post('sysGetWatchlistFields', {}).json()
+
+    def get_watchlists(self, filters=None):
+        if filters is None:
+            filters = list()
+        return tuple(
+            super().esm_post('sysGetWatchlists?hidden=false&dynamic=false&writeOnly=false&indexedOnly=false',
+                             {'filters': filters}).json())
+
+    def get_details(self, watchlist_id):
+        return super().esm_post('sysGetWatchlistDetails', {'id': watchlist_id}).json()
+
+    def get_values(self, watchlist_id):
+        file_token = self.get_details(watchlist_id)['valueFile']['fileToken']
+        return tuple(super().default_post('rs/watchlists/getValues', {'fileToken': file_token}).json()['data'])
+
+    def remove_values(self, watchlist_id, values):
+        return super().esm_post('sysRemoveWatchlistValues', {'watchlist': watchlist_id, 'values': values}).text
+
+    def name_to_id(self, watchlist_name):
+        watchlists = self.get_watchlists()
+        for watchlist in watchlists:
+            if watchlist['name'] == watchlist_name:
+                return watchlist['id']
