@@ -38,13 +38,13 @@ class GetDevice(EsmRequest):
     def __init__(self, active_session):
         super().__init__(active_session.url, headers=active_session.headers, verify=active_session.verify)
 
-    def get_receivers(self):
+    def receivers(self):
         return super().esm_post('devGetDeviceList?filterByRights=false', {'types': ['RECEIVER']}).json()
 
-    def get_data_sources(self, receiver_list=None):
+    def data_sources(self, receiver_list=None):
         data_source_dict = dict()
         if not receiver_list:
-            receiver_list = self.get_receivers()
+            receiver_list = self.receivers()
         for rec in receiver_list:
             data_sources = super().esm_post('dsGetDataSourceList', {'receiverId': rec['id']}).json()
             for ds in data_sources:
@@ -110,3 +110,4 @@ class WatchList(EsmRequest):
         for watchlist in watchlists:
             if watchlist['name'] == watchlist_name:
                 return watchlist['id']
+
