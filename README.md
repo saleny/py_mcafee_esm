@@ -19,7 +19,7 @@ Initialize a session. By default, verify is disabled:
     url = 'https://mcafee_esm_host
     username = 'username'
     password = 'password'
-    session = Session(username, password, host)
+    session = Session(username, password, url)
     session.login()
 
 If you want use CA cert:
@@ -30,7 +30,7 @@ If you want use CA cert:
     username = 'username'
     password = 'password'
     cert = '/path/to/your/CA/cert'
-    session = py_esm.Session(username, password, host, verify=cert)
+    session = py_esm.Session(username, password, url, verify=cert)
     session.login()
 
 **Incident Management**:
