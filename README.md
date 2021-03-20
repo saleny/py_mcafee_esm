@@ -1,5 +1,5 @@
 # McAfee ESM Python API
-___
+
 This module allows to get a simple python API
 wrapper around the McAfee ESM REST API principal components.
 
