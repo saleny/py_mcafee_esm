@@ -4,14 +4,14 @@ This module allows to get a simple python API
 wrapper around the McAfee ESM REST API principal components.
 
 # Main features
-___
+
 - Incident Management
 - Watchlist
 - Get Devices
 
 
 # Usage
-___
+
 Initialize a session. By default, verify is disabled:
 
     from .py_esm import Session
