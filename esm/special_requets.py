@@ -12,17 +12,17 @@ class EsmRequest:
         return post(f'{self.url}/rs/esm/v2/{method}',
                     data=dumps(data), headers=self.headers, verify=self.verify)
 
-    def esm_get(self, method):
+    def esm_get(self, method) -> post:
         return get(f'{self.url}/rs/esm/v2/{method}', headers=self.headers, verify=self.verify)
 
-    def esm_int_post(self, data):
+    def esm_int_post(self, data) -> post:
         return post(f'{self.url}/rs/v1/runningQuery', data=dumps(data), headers=self.headers, verify=self.verify)
 
-    def esm_int_get(self, method):
+    def esm_int_get(self, method) -> post:
         return get(f'{self.url}/rs/v1/runningQuery/{method}', headers=self.headers, verify=self.verify)
 
-    def default_post(self, method, data):
+    def default_post(self, method, data) -> post:
         return post(f'{self.url}/{method}', data=dumps(data), headers=self.headers, verify=self.verify)
 
-    def qry_close(self, result_id):
-        return self.esm_post('qryClose', {'resultID': result_id})
+    def qry_close(self, result_id) -> None:
+        self.esm_post('qryClose', {'resultID': result_id})

@@ -1,17 +1,17 @@
 # McAfee ESM Python API
-___
+
 This module allows to get a simple python API
 wrapper around the McAfee ESM REST API principal components.
 
 # Main features
-___
+
 - Incident Management
 - Watchlist
 - Get Devices
 
 
 # Usage
-___
+
 Initialize a session. By default, verify is disabled:
 
     from .py_esm import Session
@@ -19,7 +19,7 @@ Initialize a session. By default, verify is disabled:
     url = 'https://mcafee_esm_host
     username = 'username'
     password = 'password'
-    session = Session(username, password, host)
+    session = Session(username, password, url)
     session.login()
 
 If you want use CA cert:
@@ -30,8 +30,46 @@ If you want use CA cert:
     username = 'username'
     password = 'password'
     cert = '/path/to/your/CA/cert'
-    session = py_esm.Session(username, password, host, verify=cert)
+    session = py_esm.Session(username, password, url, verify=cert)
     session.login()
+
+**Get Device**:
+
+Get receivers:
+
+    devices = py_esm.GetDevice(session)
+    receivers = devices.receivers()
+    print(receivers)
+
+_result:_
+
+
+    (
+        {
+            'id': '144122884657250214',
+            'type': 'RECEIVER',
+            'name': 'RECEIVER-#1'
+        },
+        {
+            'id': '144129481727016999',
+            'type': 'RECEIVER',
+            'name': 'RECEIVER-#2'
+        }
+    )
+
+Get all data sources on receivers(if _receiver_list_ is None return all data sources on all receivers):
+
+    data_sources = devices.all_data_sources(receiver_list=receivers)
+    print(data_sources)
+
+_result_
+
+    {
+        '10.10.10.10': 'Exchange',
+        '172.16.0.16': 'Apache httpd',
+        '172.17.0.17': 'Cisco 5520,
+        '172.18.0.18': 'DC 1',
+    }
 
 **Incident Management**:
 
