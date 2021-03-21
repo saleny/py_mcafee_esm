@@ -12,7 +12,7 @@ wrapper around the McAfee ESM REST API principal components.
 
 # Usage
 
-Initialize a session. By default, verify is disabled:
+Initialize a session. By default, verify tls is disabled:
 
     from .py_esm import Session
     
