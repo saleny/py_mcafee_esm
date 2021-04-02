@@ -80,6 +80,16 @@ class IncidentManagement(EsmRequest):
     def get_case_detail(self, case_id: int) -> dict:
         return super().esm_post('caseGetCaseDetail', {'id': case_id}).json()
 
+    def get_case_events_detail(self, events_ids: list):
+        data = \
+            {
+                "eventIds":
+                    {
+                        "list": events_ids
+                    }
+            }
+        return super().esm_post('caseGetCaseEventsDetail', data).json()
+
 
 class GetDetail(EsmRequest):
     def __init__(self, active_session: User):
@@ -96,7 +106,7 @@ class GetDetail(EsmRequest):
             else:
                 break
 
-    def request(self, time_range: str, sigID: int) -> dict:
+    def request(self, time_range: str, sigID: int, limit=30000) -> dict:
         data = {
             "config": {
                 "timeRange": time_range,
@@ -126,7 +136,7 @@ class GetDetail(EsmRequest):
                         }]
                     }
                 ],
-                "limit": 30000,
+                "limit": limit,
                 "offset": 0
             }
         }
