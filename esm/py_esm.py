@@ -162,7 +162,7 @@ class WatchList(EsmRequest):
     def get_fields(self) -> dict:
         return super().esm_post('sysGetWatchlistFields', {}).json()
 
-    def get_watchlists(self, filters: list = None) -> dict:
+    def get_watchlists(self, filters: list = None) -> tuple:
         if filters is None:
             filters = list()
         return tuple(
