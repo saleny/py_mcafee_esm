@@ -35,11 +35,13 @@ If you want use CA cert:
 
 **Get Device**:
 
-Get receivers:
+Get device:
 
-    devices = py_esm.GetDevice(session)
-    receivers = devices.receivers()
+    device = py_esm.GetDevice(session)
+    receivers = devices.get_device(device_type="RECEIVER")
     print(receivers)
+
+All device types are here
 
 _result:_
 
@@ -56,6 +58,8 @@ _result:_
             'name': 'RECEIVER-#2'
         }
     )
+
+
 
 Get all data sources on receivers(if _receiver_list_ is None return all data sources on all receivers):
 
