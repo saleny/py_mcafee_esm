@@ -41,10 +41,50 @@ class GetDevice(EsmRequest):
     def get_receivers(self) -> tuple:
         return tuple(super().esm_post('devGetDeviceList?filterByRights=false', {'types': ['RECEIVER']}).json())
 
+    def get_device(self, device_type):
+        # device type may be
+        # "IPS"
+        # "POLICY"
+        # "RECEIVER"
+        # "THIRD_PARTY"
+        # "DBM"
+        # "DBM_DB"
+        # "DBM_AGENT"
+        # "VA"
+        # "IPSVIPS"
+        # "ESM"
+        # "APM"
+        # "APMVIPS"
+        # "ELM"
+        # "ELMREC"
+        # "LOCALESM"
+        # "RISK"
+        # "ASSET"
+        # "RISKMANAGER"
+        # "RISKAGENT"
+        # "EPO"
+        # "EPO_APP"
+        # "NSM"
+        # "NSM_SENSOR"
+        # "NSM_INTERFACE"
+        # "MVM"
+        # "SEARCH_ELASTIC"
+        # "KID_CLUSTER"
+        # "KID_NODE"
+        # "SYSTEM"
+        # "BUCKET"
+        # "UNKNOWN
+        try:
+            device = super().esm_post('devGetDeviceList?filterByRights=false', {'types': [device_type]})
+            device_json = device.json()
+        except ValueError:
+            return tuple('Error or Not Found', device)
+        return device_json
+
     def get_data_sources(self, receiver_list: tuple = None) -> dict:
         data_sources = list()
         if not receiver_list:
-            receiver_list = self.get_receivers()
+            receiver_list = self.get_receivers('RECEIVER')
         for rec in receiver_list:
             print(rec)
             data_sources.append(super().esm_post('dsGetDataSourceList', {'receiverId': rec['id']}).json())
