@@ -38,19 +38,24 @@ class GetDevice(EsmRequest):
     def __init__(self, active_session: User):
         super().__init__(active_session.url, headers=active_session.headers, verify=active_session.verify)
 
-    def receivers(self) -> tuple:
+    def get_receivers(self) -> tuple:
         return tuple(super().esm_post('devGetDeviceList?filterByRights=false', {'types': ['RECEIVER']}).json())
 
-    def all_data_sources(self, receiver_list: tuple = None) -> dict:
-        data_source_dict = dict()
+    def get_data_sources(self, receiver_list: tuple = None) -> dict:
+        data_sources = list()
         if not receiver_list:
-            receiver_list = self.receivers()
+            receiver_list = self.get_receivers()
         for rec in receiver_list:
-            data_sources = super().esm_post('dsGetDataSourceList', {'receiverId': rec['id']}).json()
-            for ds in data_sources:
-                data_source_detail = super().esm_post('dsGetDataSourceDetail', {'datasourceId': ds['id']}).json()
-                data_source_dict.update({data_source_detail['ipAddress']: data_source_detail['name']})
-        return data_source_dict
+            print(rec)
+            data_sources.append(super().esm_post('dsGetDataSourceList', {'receiverId': rec['id']}).json())
+        return data_sources
+
+    # def get_data_source_detail(self):
+    #         for ds in data_sources:
+    #             data_source_detail = super().esm_post('dsGetDataSourceDetail', {'datasourceId': ds['id']})
+    #             print(data_source_detail.text)
+    #             data_source_dict.update({data_source_detail['ipAddress']: data_source_detail['name']})
+    #     return data_source_dict
 
 
 class IncidentManagement(EsmRequest):
