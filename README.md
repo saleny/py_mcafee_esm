@@ -41,7 +41,7 @@ Get device:
     receivers = devices.get_device(device_type="RECEIVER")
     print(receivers)
 
-All device types are here
+All device types are [here](static%20files/devices.txt)
 
 _result:_
 
