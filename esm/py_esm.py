@@ -1,4 +1,4 @@
-from .special_requets import EsmRequest
+from special_requets import EsmRequest
 from base64 import b64encode
 from time import sleep
 
@@ -31,7 +31,7 @@ class Session(User, EsmRequest):
         return headers
 
     def logout(self):
-        pass
+        return super().esm_delete('logout')
 
 
 class GetDevice(EsmRequest):
@@ -88,14 +88,17 @@ class GetDevice(EsmRequest):
         for rec in receiver_list:
             print(rec)
             data_sources.append(super().esm_post('dsGetDataSourceList', {'receiverId': rec['id']}).json())
-        return data_sources
+        return data_sources[0]
 
-    # def get_data_source_detail(self):
-    #         for ds in data_sources:
-    #             data_source_detail = super().esm_post('dsGetDataSourceDetail', {'datasourceId': ds['id']})
-    #             print(data_source_detail.text)
-    #             data_source_dict.update({data_source_detail['ipAddress']: data_source_detail['name']})
-    #     return data_source_dict
+    def get_data_source_detail(self, data_sources: list):
+        data_source_dict = tuple()
+        for ds in data_sources:
+            data_source_detail = super().esm_post('dsGetDataSourceDetail', {'datasourceId': ds['id']})
+            print(data_source_detail.text)
+            # try:
+            #     data_source_dict.update({data_source_detail['ipAddress']: data_source_detail['name']})
+            # except:
+        return data_source_dict
 
 
 class IncidentManagement(EsmRequest):
