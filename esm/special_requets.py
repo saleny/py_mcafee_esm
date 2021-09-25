@@ -1,4 +1,4 @@
-from requests import post, get
+from requests import post, get, delete
 from json import dumps
 
 
@@ -12,13 +12,16 @@ class EsmRequest:
         return post(f'{self.url}/rs/esm/v2/{method}',
                     data=dumps(data), headers=self.headers, verify=self.verify)
 
-    def esm_get(self, method) -> post:
+    def esm_get(self, method) -> get:
         return get(f'{self.url}/rs/esm/v2/{method}', headers=self.headers, verify=self.verify)
+
+    def esm_delete(self, method):
+        return delete(f'{self.url}/rs/esm/v2/{method}', headers=self.headers, verify=self.verify)
 
     def esm_int_post(self, data) -> post:
         return post(f'{self.url}/rs/v1/runningQuery', data=dumps(data), headers=self.headers, verify=self.verify)
 
-    def esm_int_get(self, method) -> post:
+    def esm_int_get(self, method) -> get:
         return get(f'{self.url}/rs/v1/runningQuery/{method}', headers=self.headers, verify=self.verify)
 
     def default_post(self, method, data) -> post:
