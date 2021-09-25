@@ -27,5 +27,5 @@ class EsmRequest:
     def default_post(self, method, data) -> post:
         return post(f'{self.url}/{method}', data=dumps(data), headers=self.headers, verify=self.verify)
 
-    def qry_close(self, result_id) -> None:
+    def qry_close(self, result_id) -> post:
         self.esm_post('qryClose', {'resultID': result_id})
