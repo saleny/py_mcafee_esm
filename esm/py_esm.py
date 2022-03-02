@@ -1,6 +1,7 @@
-from special_requets import EsmRequest
+from .special_requets import EsmRequest
 from base64 import b64encode
 from time import sleep
+from re import split, search
 
 
 class User:
@@ -38,8 +39,8 @@ class GetDevice(EsmRequest):
     def __init__(self, active_session: User):
         super().__init__(active_session.url, headers=active_session.headers, verify=active_session.verify)
 
-    def get_receivers(self) -> tuple:
-        return tuple(super().esm_post('devGetDeviceList?filterByRights=false', {'types': ['RECEIVER']}).json())
+    def get_receivers(self, types) -> tuple:
+        return tuple(super().esm_post('devGetDeviceList?filterByRights=false', {'types': [types]}).json())
 
     def get_device(self, device_type):
         # device type may be
@@ -86,18 +87,18 @@ class GetDevice(EsmRequest):
         if not receiver_list:
             receiver_list = self.get_receivers('RECEIVER')
         for rec in receiver_list:
-            print(rec)
             data_sources.append(super().esm_post('dsGetDataSourceList', {'receiverId': rec['id']}).json())
         return data_sources[0]
 
     def get_data_source_detail(self, data_sources: list):
-        data_source_dict = tuple()
+        data_source_dict = dict()
         for ds in data_sources:
             data_source_detail = super().esm_post('dsGetDataSourceDetail', {'datasourceId': ds['id']})
-            print(data_source_detail.text)
-            # try:
-            #     data_source_dict.update({data_source_detail['ipAddress']: data_source_detail['name']})
-            # except:
+            # print(data_source_detail.text)
+            try:
+                data_source_dict.update({data_source_detail['ipAddress']: data_source_detail['name']})
+            except TypeError:
+                continue
         return data_source_dict
 
 
@@ -137,6 +138,23 @@ class IncidentManagement(EsmRequest):
                     }
             }
         return super().esm_post('caseGetCaseEventsDetail', data).json()
+
+    def parsing_notes_in_case(self, case_id: int):  # специально для интеграции. На вход case_detail на выход
+        # {'date_time': ['09/02/2021 22:34:53'], 'author': ['admin@ff.so'],
+        # 'comments': 'this is comment in case'}
+        case = self.get_case_detail()
+        notes_split = split(r'(------- .*)', case['notes'], maxsplit=10)
+        comments = []
+        date_time = []
+        author = []
+        comments_in_incident = {}
+        for comment in notes_split:
+            if '------- Comment Added' in comment:
+                date_time.append(search('(\d{2}/\d{2}/\d{4}.)(([0-1]\d|2[0-3]):[0-5]\d:[0-5]\d)', comment).group(0))
+                author.append(search('\S{3,}@\w{3,}.so', comment).group(0))
+                comments.append(notes_split[notes_split.index(comment) + 1])
+        comments_in_incident.update({'date_time': date_time, 'author': author, 'comments': comment})
+        return comments_in_incident
 
 
 class GetDetail(EsmRequest):
